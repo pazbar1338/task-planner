@@ -12,9 +12,9 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user = isset($_POST['user']) ? $_POST['user'] : '';
-    $password = isset($_POST['password']) ? $_POST['password'] : '';
-    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $user = $_POST['user'];
+    $password = $_POST['password'];
+    $email = $_POST['email'];
 
     if ($email) {
         $query = $conn->prepare("SELECT COUNT(*) FROM users WHERE Email = ?");
