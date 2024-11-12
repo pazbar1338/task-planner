@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 $server = 'localhost';
@@ -17,13 +16,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $query = $conn->prepare("SELECT Name, Email, Password FROM users WHERE Email = ? AND Password = ?");
+    $query = $conn->prepare("SELECT Name, Email, Password, Id FROM users WHERE Email = ? AND Password = ?");
     $query->bind_param("ss", $email, $password);
     $query->execute();
-    $query->bind_result($username, $usermail, $userpassword);
+    $query->bind_result($userName, $userEmail, $userPassword, $userId);
+
 
     if ($query->fetch()) {
-        $_SESSION['username'] = $username;
+        $_SESSION['userName'] = $userName;
+        $_SESSION['userId'] = $userId; //guarda la id del usuario en el array $_SESSION (lo utilizaremos en home.php para asignar la tarea al usuario que la ha creado).
         header('Location: ./home.php');
 
     } else {

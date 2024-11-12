@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $email = $_POST['email'];
 
-    if ($email) {
+    if($email) {
         $query = $conn->prepare("SELECT COUNT(*) FROM users WHERE Email = ?");
         $query->bind_param("s", $email);
         $query->execute();
@@ -24,21 +24,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query->fetch();
         $query->close();
 
-        if ($emailCount > 0) {
+        if($emailCount > 0) {
             echo "Ese email ya existe. Por favor, introduce otro.";
-
         } else {
             $query = $conn->prepare("INSERT INTO users (Name, Email, Password) VALUES (?, ?, ?)");
             $query->bind_param("sss", $user, $email, $password);
 
             if ($query->execute()) {
-            echo "Usuario creado correctamente";
-
+                echo "Usuario creado correctamente";
             } else {
-            echo $query->error;
+                echo $query->error;
+            }
         }
-        $query->close();
-    }}
+    }
 }
 
 $conn->close();
@@ -77,7 +75,6 @@ $conn->close();
         <div>
             <a href="/task-planner/login.php">Volver<a>
         </div>
-    
     </form>    
 
 </body>
