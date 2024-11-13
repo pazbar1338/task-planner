@@ -12,6 +12,11 @@ if ($conn->connect_error) {
     die("Error de conexion:" . $conn->connect_error);
 }
 
+//lleva a login.php si no estamos logueados
+if(!isset($_SESSION['userName']) || !isset($_SESSION['userId'])){
+    header('Location: ./login.php');
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
     $title = $_POST['title'];
     $description = $_POST['description'];
@@ -86,9 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     while ($selectedUsers = $user_query->fetch_assoc()) {
                         echo "<option value='" . $selectedUsers['Id'] . "'>" . $selectedUsers['Name'] . "</option>"; //rellena las opciones con el Nombre y el Id de la tabla usuarios
                     }
-                } else {
-                    echo "<option disabled>No users found</option>";
                 }
+            
             ?>
             </select></label>
             <script>
@@ -106,6 +110,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
     <div>
         <a href="./logout.php">Log out</a>
+    </div>
+    <div>
+        <h2>Tus tareas creadas:</h2>
+        <?php
+        //mostrar tareas creadas por el user logueado
+        $createdBy = $_SESSION['userId']; 
+        $displayCreatedTasks = $conn->query("SELECT Title, Description, Due_date FROM task WHERE Created_by = $createdBy");
+        while ($row = $displayCreatedTasks->fetch_assoc()) {
+            echo "Titulo: " . $row['Title'] . " <br>";
+            echo "Descripcion: " . $row['Description'] . " <br>";
+            echo "Fecha de entrega: " . $row['Due_date'] . " <br>";
+        }
+        ?>
+    </div>
+    <div>
+        <h2>Tus tareas asignadas:</h2>
+        <?php
+
+        ?>
     </div>
     
 </body>
