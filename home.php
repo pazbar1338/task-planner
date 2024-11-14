@@ -17,17 +17,19 @@ if(!isset($_SESSION['userName']) || !isset($_SESSION['userId'])){
     header('Location: ./login.php');
 }
 
+$userId = $_SESSION['userId']; // conn.php?
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
     $title = $_POST['title'];
     $description = $_POST['description'];
     $dueDate = $_POST['dueDate'];
-    $createdBy = $_SESSION['userId'];
+    // $userId = $_SESSION['userId'];
     $usersToTask = $_POST['usersArray']; //array que contiene las Id de los usuarios selecionados
 
     //creacion de tarea
     if($title && $description && $dueDate) { 
         $query = $conn->prepare("INSERT INTO task (Title, Description, Due_date, Created_by) VALUES (?, ?, ?, ?)"); //prepara la peticion
-        $query->bind_param("ssss", $title, $description, $dueDate, $createdBy); //enlaza los parametros con las variables obtenidas desde el form
+        $query->bind_param("ssss", $title, $description, $dueDate, $userId); //enlaza los parametros con las variables obtenidas desde el form
 
         if($query->execute()) {
             $taskId = $conn->insert_id; //obtiene la Id de la ultima tarea creada
@@ -37,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $userTaskQuery = $conn->prepare("INSERT INTO task_users (user_id, task_id) VALUES (?, ?)");
 
                 foreach($usersToTask as $userId) { //$userId va tomando los valores de las Id de usuarios 
-                    $userTaskQuery->bind_param("ii", $userId, $taskId); //
+                    $userTaskQuery->bind_param("ii", $userId, $taskId);
                     $userTaskQuery->execute();
                 }
                 echo "Usuarios asignados correctamente.<br>";
@@ -50,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
 
 ?>
 
@@ -114,20 +115,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div>
         <h2>Tus tareas creadas:</h2>
         <?php
-        //mostrar tareas creadas por el user logueado
-        $createdBy = $_SESSION['userId']; 
-        $displayCreatedTasks = $conn->query("SELECT Title, Description, Due_date FROM task WHERE Created_by = $createdBy");
-        while ($row = $displayCreatedTasks->fetch_assoc()) {
-            echo "Titulo: " . $row['Title'] . " <br>";
-            echo "Descripcion: " . $row['Description'] . " <br>";
-            echo "Fecha de entrega: " . $row['Due_date'] . " <br>";
+
+        //mostrar tareas creadas por el user logueado 
+        $createdTasksQuery = $conn->query("SELECT Title, Description, Due_date FROM task WHERE Created_by = $userId");
+        if ($createdTasksQuery->num_rows > 0){
+            while ($row = $createdTasksQuery->fetch_assoc()) {
+                echo "Titulo: " . $row['Title'] . " <br>";
+                echo "Descripcion: " . $row['Description'] . " <br>";
+                echo "Fecha de entrega: " . $row['Due_date'] . " <br>";
+            }
+        } else {
+            echo "No has creado ninguna tarea";
         }
+
         ?>
     </div>
     <div>
         <h2>Tus tareas asignadas:</h2>
         <?php
 
+        $assignedTasksQuery = $conn->query("SELECT task_id FROM task_users WHERE user_id = $userId");
+        if($assignedTasksQuery->num_rows > 0){
+            while($row = $assignedTasksQuery->fetch_assoc()){
+                $taskId = $row['task_id'];
+
+                $taskQuery = $conn->query("SELECT Title, Description, Due_date, created_by FROM task WHERE Id = $taskId");
+                if ($taskQuery) {
+                    while($taskRow = $taskQuery->fetch_assoc()) {
+                        echo "Titulo: " . $taskRow['Title'] . " <br>";
+                        echo "Descripcion: " . $taskRow['Description'] . " <br>";
+                        echo "Fecha de entrega: " . $taskRow['Due_date'] . " <br>";
+                        echo "Creado por " . $taskRow['created_by'] . " <br>";
+                    }
+                }
+                else {
+                    echo "error obteniendo los detalles de la tarea" . $conn->error;
+                }
+            }
+        } else {
+            echo "No tienes tareas asignadas";
+        }
         ?>
     </div>
     
