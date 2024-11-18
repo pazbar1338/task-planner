@@ -19,6 +19,7 @@ if(!isset($_SESSION['userName']) || !isset($_SESSION['userId'])){
 
 $userId = $_SESSION['userId']; // conn.php?
 
+//manejo del formulario para crear tarea y asignar usuarios
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
     $title = $_POST['title'];
     $description = $_POST['description'];
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = $conn->prepare("INSERT INTO task (Title, Description, Due_date, Created_by) VALUES (?, ?, ?, ?)"); //prepara la peticion
         $query->bind_param("ssss", $title, $description, $dueDate, $userId); //enlaza los parametros con las variables obtenidas desde el form
 
-        if($query->execute()) {
+        if($query->execute()) { //crea la tarea
             $taskId = $conn->insert_id; //obtiene la Id de la ultima tarea creada
 
             //asignacion de usuarios a la tarea
@@ -42,10 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $userTaskQuery->bind_param("ii", $userId, $taskId);
                     $userTaskQuery->execute();
                 }
-                echo "Usuarios asignados correctamente.<br>";
+                // echo "Usuarios asignados correctamente.<br>";
 
-            }   
-        echo "Tarea creada correctamente.";
+            }
+            header('Location: ./home.php'); //refresca la pagina 
+            // echo "Tarea creada correctamente.";
 
         } else {
             echo $query->error;
@@ -84,8 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="date" name="dueDate" id="dueDate" min="" required>
         </div>
         <div>
-            <label>Asignar a usuario:
-            <select name="usersArray[]" class="select2" multiple required> <!-- usersArray[] ha de ser de tipo array, [] para poder ser iterado  -->
+            <label for="usersArray">Asignar a usuario:</label>
+            <select name="usersArray[]" id=usersArray class="select2" multiple required> <!-- usersArray[] ha de ser de tipo array, [] para poder ser iterado  -->
             <?php
                 $user_query = $conn->query("SELECT Id, Name FROM users");
                 if($user_query){
@@ -95,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             
             ?>
-            </select></label>
+            </select>
             <script>
                 $(document).ready(function() {
                     $('.select2').select2({
@@ -117,44 +119,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php
 
         //mostrar tareas creadas por el user logueado 
-        $createdTasksQuery = $conn->query("SELECT Title, Description, Due_date FROM task WHERE Created_by = $userId");
+        $createdTasksQuery = $conn->query("SELECT Id, Title, Description, Due_date FROM task WHERE Created_by = $userId");
         if ($createdTasksQuery->num_rows > 0){
             while ($row = $createdTasksQuery->fetch_assoc()) {
                 echo "Titulo: " . $row['Title'] . " <br>";
                 echo "Descripcion: " . $row['Description'] . " <br>";
+
+                $userQuery = $conn->query("SELECT Name FROM users WHERE Id IN (SELECT user_id FROM task_users WHERE task_id = " . $row['Id'] . ")");
+                if($userQuery) {
+                    echo "Asignado a: ";
+                    while($userRow = $userQuery->fetch_assoc()) {
+                        echo $userRow['Name'] . " ";  
+                    }
+                }
+                echo "<br>";
                 echo "Fecha de entrega: " . $row['Due_date'] . " <br>";
+                echo "<a href='./edit_task.php?task_id=" . $row['Id'] . "'>Editar tarea</a><br><br>";
+
+                
+                
             }
         } else {
             echo "No has creado ninguna tarea";
         }
-
         ?>
     </div>
     <div>
         <h2>Tus tareas asignadas:</h2>
         <?php
 
-        $assignedTasksQuery = $conn->query("SELECT task_id FROM task_users WHERE user_id = $userId");
+        //mostrar tareas asignadas al user logueado
+        $assignedTasksQuery = $conn->query("SELECT Title, Description, Due_date, created_by FROM task WHERE Id IN (SELECT task_id FROM task_users WHERE user_id = $userId)");
         if($assignedTasksQuery->num_rows > 0){
-            while($row = $assignedTasksQuery->fetch_assoc()){
-                $taskId = $row['task_id'];
+            while ($taskRow = $assignedTasksQuery->fetch_assoc()) {
 
-                $taskQuery = $conn->query("SELECT Title, Description, Due_date, created_by FROM task WHERE Id = $taskId");
-                if ($taskQuery) {
-                    while($taskRow = $taskQuery->fetch_assoc()) {
-                        echo "Titulo: " . $taskRow['Title'] . " <br>";
-                        echo "Descripcion: " . $taskRow['Description'] . " <br>";
-                        echo "Fecha de entrega: " . $taskRow['Due_date'] . " <br>";
-                        echo "Creado por " . $taskRow['created_by'] . " <br>";
-                    }
-                }
-                else {
-                    echo "error obteniendo los detalles de la tarea" . $conn->error;
-                }
+                echo "Titulo: " . $taskRow['Title'] . " <br>";
+                echo "Descripcion: " . $taskRow['Description'] . " <br>";
+                echo "Fecha de entrega: " . $taskRow['Due_date'] . " <br>";
+                echo "Creado por " . $taskRow['created_by'] . " <br>"; //RECORDATORIO: cambiar Id por nombre de usuario!!!!!!!
+                echo "<br>";
             }
         } else {
-            echo "No tienes tareas asignadas";
+            echo "No estas asignado a ninguna tarea";
         }
+
         ?>
     </div>
     
