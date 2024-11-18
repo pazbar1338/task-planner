@@ -134,7 +134,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 echo "<br>";
                 echo "Fecha de entrega: " . $row['Due_date'] . " <br>";
-                echo "<a href='./edit_task.php?task_id=" . $row['Id'] . "'>Editar tarea</a><br><br>";
+                echo "<a href='./edit_task.php?task_id=" . $row['Id'] . "'>Editar tarea</a><br>";
+                echo "<a href='./delete_task.php?task_id=" . $row['Id'] . "'> Eliminar tarea</a><br><br>";
 
                 
                 
