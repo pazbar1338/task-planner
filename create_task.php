@@ -17,14 +17,12 @@ if(!isset($_SESSION['userName']) || !isset($_SESSION['userId'])){
     header('Location: ./login.php');
 }
 
-$userId = $_SESSION['userId'];
-
 //manejo del formulario para crear tarea y asignar usuarios
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
     $title = $_POST['title'];
     $description = $_POST['description'];
     $dueDate = $_POST['dueDate'];
-    // $userId = $_SESSION['userId'];
+    $userId = $_SESSION['userId'];
     $usersToTask = $_POST['usersArray']; //array que contiene las Id de los usuarios selecionados
 
     //creacion de tarea
