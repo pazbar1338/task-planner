@@ -40,8 +40,16 @@ if ($assignedUsersQuery) {
     }
 }
 
-//manejo de formulario para actualizar tabla task y tabla task_users
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//obtencion de la id del creador de la tarea
+ $createdByquery = $conn->query("SELECT created_by FROM task WHERE Id = $taskId");
+ if ($createdByquery) {
+ $row = $createdByquery->fetch_assoc();
+ $createdBy = $row['created_by'];
+}
+
+//manejo de formulario para actualizar tabla task y tabla task_users.
+//Si quien intenta modificar los datos no es el creador de la tarea al enviar el formulario no ocurre nada.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $createdBy == $_SESSION['userId']) {
 
     $newTitle = $_POST['title'];
     $newDescription = $_POST['description'];
@@ -57,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if($updateTask->execute()) {
             echo "Titulo, descripcion y fecha de entrega editadas con exito<br>";
         } else {
-            $conn->error;
+            echo $conn->error;
         }
     }
     
@@ -154,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="submit" value="Actualizar tarea">
             </div>
             <div>
-                <a href="./home.php">Volver a tareas</a>
+                <a href="./home.php">Volver a Inicio</a>
             </div>
         </div>
     </form>

@@ -46,7 +46,7 @@ if ($createdBy == $_SESSION['userId']) {
 
 } else {
     echo "No tienes permiso para eliminar esta tarea.<br>";
-    echo "<a href='./home.php'>Volver a home</a>";
+    echo "<a href='./home.php'>Volver a tareas</a>";
 }
 
 
