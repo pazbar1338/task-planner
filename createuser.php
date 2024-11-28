@@ -1,15 +1,6 @@
 <?php
 
-$server = 'localhost';
-$usern = 'root';
-$passw = '';
-$dbname = 'planeadicto';
-
-$conn = new mysqli($server, $usern, $passw, $dbname);
-
-if ($conn->connect_error) {
-    die("Error de conexion:" . $conn->connect_error);
-}
+require 'dbconn.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $_POST['user'];

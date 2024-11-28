@@ -1,16 +1,7 @@
 <?php
 session_start();
 
-$server = 'localhost';
-$usern = 'root';
-$passw = '';
-$dbname = 'planeadicto';
-
-$conn = new mysqli($server, $usern, $passw, $dbname);
-
-if ($conn->connect_error) {
-    die("Error de conexion:" . $conn->connect_error);
-}
+require 'dbconn.php';
 
 //lleva a login.php si el usuario no se ha logueado
 if(!isset($_SESSION['userName']) || !isset($_SESSION['userId'])){
@@ -32,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     }
 }
 
-$userId = $_SESSION['userId']; // conn.php?
+$userId = $_SESSION['userId']; 
 
 ?>
 
