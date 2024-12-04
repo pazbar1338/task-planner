@@ -5,4 +5,7 @@ function sessionDestroy() {
     session_destroy();
 }
 
+sessionDestroy();
+
+header('Location:../index.php');
 ?>

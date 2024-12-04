@@ -26,13 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $taskUpdated = updateTask($conn, $taskId, $title, $description, $dueDate, $assignedUserIds);
 
         if ($taskUpdated) {
-            $message = 'Tarea actualizada correctamente';
+            $message = "<p class='text-success'>Tarea actualizada correctamente</p>";
 
             //reasigna para mostrar los nuevos datos en el formulario
             $task = getTaskById($conn, $taskId);
             $assignedUsers = getAssignedUsers($conn, $taskId);
         } else {
-            $message = 'Error al actualizar la tarea. Intenta nuevamente.';
+            $message = "<p class='text-danger'>Error al actualizar la tarea. Intenta nuevamente.</p>";
         }
     }
 }

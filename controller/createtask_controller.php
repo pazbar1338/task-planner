@@ -22,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $taskCreated = createTask($title, $description, $dueDate, $createdBy, $usersToTask, $conn);
 
         if ($taskCreated) {
-            $message = "Tarea creada y usuarios asignados correctamente.";
+            $message = "<p class='text-success'>Tarea creada y usuarios asignados correctamente.</p>";
         } else {
-            $message = "Hubo un error al crear la tarea o asignar usuarios.";
+            $message = "<p class='text-danger'>Hubo un error al crear la tarea o asignar usuarios.</p>";
         }
     }
 }

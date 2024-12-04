@@ -16,7 +16,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             header('Location: ./controller/home_controller.php');
         }
     } else {
-        $message = 'Datos invalidos. Registrate si no tienes cuenta';
+        $message = "<p class='text-danger'>Datos invalidos. Registrate si no tienes cuenta</p>";
     }
 }
 

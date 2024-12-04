@@ -10,12 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
 
     if (checkEmail($conn, $email)) {
-        $message = "Ese email ya existe. Introduce otro";
+        $message = "<p class='text-danger'>Ese email ya existe. Introduce otro.</p>";
     } else {
         if (createUser($conn, $name, $email, $password)) {
-            $message = "Usuario creado correctamente";
+            $message = "<p class='text-success'>Usuario creado correctamente.</p>";
         } else {
-            $message = "Error al crear el usuario";
+            $message = "<p class='text-danger'>Error al crear el usuario.</p>";
         }
     }
 }
