@@ -16,6 +16,19 @@ $task = getTaskById($conn, $taskId);
 $assignedUsers = getAssignedUsers($conn, $taskId);
 $allUsers = getUsers($conn);
 
+
+$taskCreatedByResult = getTaskCreatedBy($conn, $taskId);
+$createdBy = null;
+if ($taskCreatedByResult && $taskCreatedByResult) {
+    $row = $taskCreatedByResult->fetch_assoc();
+    $createdBy = $row['created_by'];
+}
+
+if ($createdBy !== $_SESSION['userId']){ //leva al intruso a la pagina de los castigados
+    header('Location: ../view/grounded_view.php');
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $description = $_POST['description'];

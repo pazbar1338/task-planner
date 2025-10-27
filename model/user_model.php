@@ -1,7 +1,9 @@
 <?php
 require 'dbconn.php';
 
-
+/*Funciones a la BD relacionadas con las usuarios.
+Cuando el input viene del usuario se ha utilizado prepare() por seguridad.
+Para las demas se ha utilizado query() para simplificar*/
 
 
 //comprueba si el email existe en la DB

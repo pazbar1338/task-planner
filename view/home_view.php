@@ -54,8 +54,8 @@
                             ?>
                         </td>
                         <td class="text-center align-middle">
-                            <a href="./edittask_controller.php?task_id=<?php echo $createdTask['Id']; ?>" class="btn btn-warning btn-sm">Editar</a>
-                            <a href="./deletetask_controller.php?task_id=<?php echo $createdTask['Id']; ?>" class="btn btn-danger btn-sm">Eliminar</a>
+                            <a href="./edittask_controller.php?task_id=<?php echo $createdTask['Id']; ?>" class="btn btn-warning btn-sm fw-bold">Editar</a>
+                            <a href="./deletetask_controller.php?task_id=<?php echo $createdTask['Id']; ?>" class="btn btn-danger btn-sm fw-bold">Eliminar</a>
                         </td>
                     </tr>
                 <?php } ?>
@@ -110,7 +110,7 @@
                             <?php if (!$assignedTaskRow['completed']) { ?>
                                 <form action="./home_controller.php" method="post" class="d-inline">
                                     <input type="hidden" name="taskId" value="<?php echo $assignedTaskRow['Id']; ?>">
-                                    <button type="submit" name="taskComplete" class="btn btn-success btn-sm">Tarea realizada</button>
+                                    <button type="submit" name="taskComplete" class="btn btn-success btn-sm fw-bold">Tarea realizada</button>
                                 </form>
                             <?php } ?>
                         </td>

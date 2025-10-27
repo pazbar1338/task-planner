@@ -12,13 +12,14 @@ if (!isset($_SESSION['userName']) || !isset($_SESSION['userId'])) {
 $userId = $_SESSION['userId'];
 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['taskComplete'])) {
+//el boton de tarea completa es un formulario
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['taskComplete'])) { 
     $taskId = $_POST['taskId'];
     markTaskComplete($conn, $taskId);
     header('Location: ' . $_SERVER['PHP_SELF']);
 }
 
-//Asigna las tareas creadas y asignadas a las variables
+//Solicita y asigna las tareas creadas y asignadas a las variables
 $createdTasks = getCreatedTasks($conn, $userId);
 $assignedTasks = getAssignedTasks($conn, $userId);
 
